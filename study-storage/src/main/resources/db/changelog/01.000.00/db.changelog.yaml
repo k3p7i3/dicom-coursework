@@ -1,0 +1,21 @@
+---
+databaseChangeLog:
+  - include:
+      relativeToChangeLogFile: true
+      file: patient.sql
+  - include:
+      relativeToChangeLogFile: true
+      file: study.sql
+  - include:
+      relativeToChangeLogFile: true
+      file: series.sql
+  - include:
+      relativeToChangeLogFile: true
+      file: dicom_instance.sql
+  - changeSet:
+      id: 01.000.00
+      author: pkopyrina
+      logicalFilePath: 01.000.00/db.changelog.yaml
+      changes:
+        - tagDatabase:
+            tag: 01.000.00
