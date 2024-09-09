@@ -74,11 +74,13 @@ class Controller(
 
     @PostMapping("dicom/rename")
     fun renameDicom(
-        @RequestBody oldFilePath: String,
-        @RequestBody newFilePath: String
+        @RequestBody renameRequest: RenameFileRequest
     ): ResponseEntity<String> {
-        dicomService.renameDicom(oldFilePath, newFilePath)
-        return ResponseEntity.ok(newFilePath)
+        dicomService.renameDicom(
+            renameRequest.oldFilePath,
+            renameRequest.newFilePath
+        )
+        return ResponseEntity.ok(renameRequest.newFilePath)
     }
 
     @PostMapping("/directory/create")
@@ -96,11 +98,13 @@ class Controller(
 
     @PostMapping("/directory/update")
     fun renameDirectory(
-        @RequestBody oldDirPath: String,
-        @RequestBody newDirPath: String
+        @RequestBody renameRequest: RenameFileRequest
     ): ResponseEntity<String> {
-        dicomService.renameDirectory(oldDirPath, newDirPath)
-        return ResponseEntity.ok(newDirPath)
+        dicomService.renameDirectory(
+            renameRequest.oldFilePath,
+            renameRequest.newFilePath
+        )
+        return ResponseEntity.ok(renameRequest.newFilePath)
     }
 
     @GetMapping("/directory/get-content")
