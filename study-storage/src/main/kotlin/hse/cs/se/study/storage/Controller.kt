@@ -23,7 +23,7 @@ class Controller(
     private val fileManagementService: FileManagementService
 ) {
 
-    @PostMapping("dicom/upload")
+    @PostMapping("/dicom/upload")
     fun uploadDicom(
         @RequestPart multipartFile: MultipartFile,
         @RequestParam dir: String,
@@ -46,13 +46,13 @@ class Controller(
         return ResponseEntity.internalServerError().build()
     }
 
-    @GetMapping("dicom/get-info")
+    @GetMapping("/dicom/get-info")
     fun getDicomInfo(@RequestParam filePath: String): ResponseEntity<DicomFullInfo> {
         val dicomInfo = dicomService.getFullDicomInfo(filePath)
         return ResponseEntity.ok(dicomInfo)
     }
 
-    @GetMapping("dicom/get-frame", produces = [MediaType.IMAGE_JPEG_VALUE])
+    @GetMapping("/dicom/get-frame", produces = [MediaType.IMAGE_JPEG_VALUE])
     fun getDicomFrame(
         @RequestParam filePath: String,
         @RequestParam frame: Int = 1
@@ -66,13 +66,13 @@ class Controller(
         }
     }
 
-    @DeleteMapping("dicom/delete")
+    @DeleteMapping("/dicom/delete")
     fun deleteDicom(@RequestParam filePath: String): ResponseEntity<String> {
         dicomService.deleteDicom(filePath)
         return ResponseEntity.ok(filePath)
     }
 
-    @PostMapping("dicom/rename")
+    @PostMapping("/dicom/rename")
     fun renameDicom(
         @RequestBody renameRequest: RenameFileRequest
     ): ResponseEntity<String> {

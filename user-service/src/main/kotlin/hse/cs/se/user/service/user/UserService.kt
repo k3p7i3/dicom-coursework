@@ -62,7 +62,7 @@ class UserService(
         )
         logger.logTrace("Created user(id=${user.uid}, email=${user.email})")
 
-        val response = dicomStorageClient.createDirectory("/${user.uid}")
+        val response = dicomStorageClient.createDirectory("${user.uid}")
         if (response.statusCode != HttpStatus.OK) {
             logger.logError(
                 "Failed to create directory for user " +

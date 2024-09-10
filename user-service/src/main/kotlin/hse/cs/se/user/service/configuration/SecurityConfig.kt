@@ -1,15 +1,19 @@
-package hse.cs.se.user.service.config
+package hse.cs.se.user.service.configuration
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.security.config.Customizer
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
+import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
 
+
 @Configuration
-@EnableWebSecurity
+@EnableMethodSecurity
 class SecurityConfig()  {
 
     @Bean
@@ -20,12 +24,14 @@ class SecurityConfig()  {
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
         http
-            .csrf().disable()
+            .csrf { it.disable() }
             .authorizeHttpRequests { authorize ->
-                authorize.anyRequest().authenticated()
+                authorize
+                    .requestMatchers("/api/v1/user/create").permitAll()
+                    .anyRequest().authenticated()
+
             }
-            .formLogin().disable()
-            .logout().disable()
+            .httpBasic(Customizer.withDefaults())
 
         return http.build()
     }

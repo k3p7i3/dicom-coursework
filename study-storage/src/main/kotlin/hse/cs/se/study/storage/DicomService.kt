@@ -113,6 +113,7 @@ class DicomService(
     ): DicomFullInfo {
 
         val dicomFile = convertMultipartFileToFile(multipartFile)
+        val fullDicomInfo: DicomFullInfo
 
         DicomParser(dicomFile).use { parser ->
 
@@ -123,7 +124,7 @@ class DicomService(
                 path,
                 fileName
             )
-            val fullDicomInfo = uploadParsedDicomInfo(parser, path, fileName, domain)
+            fullDicomInfo = uploadParsedDicomInfo(parser, domain, path, fileName)
 
             if (fullDicomInfo.dicomInstance.numberOfFrames != framesResult.size) {
                 logger.logWarn(
@@ -132,9 +133,13 @@ class DicomService(
                         "extractedImagesNumber=${framesResult.size})"
                 )
             }
-
-            return fullDicomInfo
         }
+
+        if (dicomFile.exists()) {
+            dicomFile.delete()
+        }
+
+        return fullDicomInfo
     }
 
     fun deleteDicom(
@@ -342,7 +347,7 @@ class DicomService(
                 )
 
         logger.logTrace(
-            "Saved Study(studyUid=${study.studyUid}, studyId=${study.studyId}"
+            "Saved Study(studyUid=${study.studyUid}, studyId=${study.studyId})"
         )
 
         return study
@@ -394,7 +399,7 @@ class DicomService(
     ): File {
         val file = File(multipartFile.originalFilename ?: multipartFile.name)
         FileOutputStream(file).use { outputStream ->
-            outputStream.write(file.readBytes())
+            outputStream.write(multipartFile.bytes)
         }
         return file
     }

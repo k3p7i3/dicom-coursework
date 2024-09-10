@@ -21,10 +21,10 @@ import javax.imageio.ImageIO
 import javax.imageio.ImageReader
 
 class DicomParser(
-    dicomFile: File
+    private val dicomFile: File
 ) : Closeable {
-    private val dicomInputStream = DicomInputStream(dicomFile)
-    private val attributes = dicomInputStream.readDataset()
+
+    private val attributes = DicomInputStream(dicomFile).use { it.readDataset() }
 
     private val dicomTimeFormatter = DateTimeFormatter.ofPattern(DICOM_TIME_FORMAT)
 
@@ -37,7 +37,8 @@ class DicomParser(
         }
 
         val reader = iterator.next()
-        reader.input = dicomInputStream
+        val dicomStream = DicomInputStream(dicomFile)
+        reader.input = dicomStream
 
         val framesNum = reader.getNumImages(true)
 
@@ -47,13 +48,14 @@ class DicomParser(
             }
 
         reader.dispose()
+        dicomStream.close()
 
         return images
     }
 
     fun parsePatient() = Patient(
         patientId = attributes.getString(Tag.PatientID),
-        patientName = attributes.getString(Tag.PatientName),
+        patientName = formatName(attributes.getString(Tag.PatientName)),
         patientBirthDate = dateToLocalDate(attributes.getDate(Tag.PatientBirthDate)),
         patientSex = stringToPatientSex(attributes.getString(Tag.PatientSex)),
         patientComments = attributes.getString(Tag.PatientComments)
@@ -77,8 +79,8 @@ class DicomParser(
         seriesDate = dateToLocalDate(attributes.getDate(Tag.SeriesDate)),
         seriesTime = dicomTimeToLocalTime(attributes.getString(Tag.SeriesTime)),
         seriesDescription = attributes.getString(Tag.SeriesDescription),
-        performingPhysicianName = attributes.getString(Tag.PerformingPhysicianName),
-        operatorName = attributes.getString(Tag.OperatorsName),
+        performingPhysicianName = formatName(attributes.getString(Tag.PerformingPhysicianName)),
+        operatorName = formatName(attributes.getString(Tag.OperatorsName)),
         bodyPartExamined = attributes.getString(Tag.BodyPartExamined),
         equipment = parseEquipment(attributes)
     )
@@ -106,7 +108,6 @@ class DicomParser(
     }
 
     override fun close() {
-        dicomInputStream.close()
         attributes.clear()
     }
 
@@ -136,7 +137,7 @@ class DicomParser(
                 .any { field -> field != null }
         }
 
-    private fun stringToSmokingStatus(str: String) =
+    private fun stringToSmokingStatus(str: String?) =
         when (str) {
             "YES" -> Study.PatientStudy.SmokingStatus.YES
             "NO" -> Study.PatientStudy.SmokingStatus.NO
@@ -151,7 +152,7 @@ class DicomParser(
         )?.firstOrNull()
 
         return Study.Physician(
-            physicianName = attributes.getString(Tag.ReferringPhysicianName),
+            physicianName = formatName(attributes.getString(Tag.ReferringPhysicianName)),
             institutionName = physicianIdentification?.getString(Tag.InstitutionName),
             institutionAddress = physicianIdentification?.getString(Tag.InstitutionAddress),
             departmentName = physicianIdentification?.getString(Tag.InstitutionalDepartmentName),
@@ -195,7 +196,7 @@ class DicomParser(
 
     private fun dicomTimeToLocalTime(dicomTime: String?) =
         dicomTime?.let {
-            LocalTime.from(dicomTimeFormatter.parse(it))
+            LocalTime.from(dicomTimeFormatter.parse(it.take(DICOM_TIME_FORMAT.length)))
         }
 
     private fun dateToLocalDate(date: Date?) =
@@ -204,7 +205,10 @@ class DicomParser(
     private fun stringIntegerToInt(stringInt: String?) =
         stringInt?.trim()?.toIntOrNull()
 
+    private fun formatName(name: String?) =
+        name?.replace(Regex("(\\^)+"), " ")
+
     companion object {
-        const val DICOM_TIME_FORMAT = "HHmmss.SSSSSS"
+        const val DICOM_TIME_FORMAT = "HHmmss"
     }
 }

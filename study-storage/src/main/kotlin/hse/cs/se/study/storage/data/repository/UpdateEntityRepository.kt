@@ -3,7 +3,9 @@ package hse.cs.se.study.storage.data.repository
 import hse.cs.se.study.storage.data.model.Series
 import hse.cs.se.study.storage.data.model.Study
 import org.springframework.data.jdbc.core.JdbcAggregateTemplate
+import org.springframework.stereotype.Component
 
+@Component
 class UpdateEntityRepository(
     private val template: JdbcAggregateTemplate
 ) {

@@ -201,6 +201,7 @@ class S3ClientImpl(
                 )
             }
 
+
             val putObjectRequest = PutObjectRequest(bucket, filePath, file)
                 .withCannedAcl(CannedAccessControlList.PublicRead)
 

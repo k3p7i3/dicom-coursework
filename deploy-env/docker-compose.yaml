@@ -1,0 +1,39 @@
+---
+version: "3.9"
+services:
+  postgres:
+    image: postgres:13.3
+    container_name: postgres
+    command: ["postgres", "-c", "log_statement=all"]
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - ./postgres/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      start_period: 15s
+      timeout: 3s
+      interval: 10s
+      retries: 10
+
+  study-storage-service:
+    image: study-storage-service:v1
+    container_name: study-storage-service
+    environment:
+      AWS_JAVA_V1_DISABLE_DEPRECATION_ANNOUNCEMENT: "true"
+    ports:
+      - "8081:8081"
+    links:
+      - postgres
+
+  user-service:
+    image: user-service:v1
+    container_name: user-service
+    ports:
+      - "8080:8080"
+    links:
+      - postgres
+      - study-storage-service

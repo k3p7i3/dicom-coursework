@@ -3,24 +3,19 @@ package hse.cs.se.user.service.dicom
 import hse.cs.se.user.service.dicom.data.model.*
 import org.springframework.http.*
 import org.springframework.security.access.prepost.PreAuthorize
-import org.springframework.web.bind.annotation.DeleteMapping
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RequestPart
+import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
 import java.util.*
 
 @RequestMapping("/api/v1/dicom")
+@RestController
 class DicomController(
     private val dicomClient: DicomStorageClient,
-    private val accessService: AccessCheckService
+    private val accessCheckService: AccessCheckService
 ) {
 
     @PostMapping("/upload")
-    @PreAuthorize("@accessService.hasAccessToResource(authentication.principal, #filePath)")
+    @PreAuthorize("@accessCheckService.hasAccessToResource(authentication.principal, #filePath)")
     fun uploadDicom(
         @RequestPart multipartFile: MultipartFile,
         @RequestParam filePath: String
@@ -32,7 +27,7 @@ class DicomController(
     }
 
     @GetMapping("/get-info")
-    @PreAuthorize("@accessService.hasAccessToResource(authentication.principal, #filePath)")
+    @PreAuthorize("@accessCheckService.hasAccessToResource(authentication.principal, #filePath)")
     fun getDicomInfo(
         @RequestParam filePath: String
     ): ResponseEntity<DicomFullInfo> {
@@ -40,7 +35,7 @@ class DicomController(
     }
 
     @GetMapping("/get-frame")
-    @PreAuthorize("@accessService.hasAccessToResource(authentication.principal, #filePath)")
+    @PreAuthorize("@accessCheckService.hasAccessToResource(authentication.principal, #filePath)")
     fun getDicomFrame(
         @RequestParam filePath: String,
         @RequestParam frame: Int = 1
@@ -49,7 +44,7 @@ class DicomController(
     }
 
     @DeleteMapping("/delete")
-    @PreAuthorize("@accessService.hasAccessToResource(authentication.principal, #filePath)")
+    @PreAuthorize("@accessCheckService.hasAccessToResource(authentication.principal, #filePath)")
     fun deleteDicom(
         @RequestBody filePath: String
     ): ResponseEntity<String> {
@@ -57,7 +52,7 @@ class DicomController(
     }
 
     @PostMapping("/rename")
-    @PreAuthorize("@accessService.hasAccessToResource(authentication.principal, #renameRequest.oldFilePath)")
+    @PreAuthorize("@accessCheckService.hasAccessToResource(authentication.principal, #renameRequest.oldFilePath)")
     fun renameDicom(
         @RequestBody renameRequest: RenameFileRequest
     ): ResponseEntity<String> {
@@ -65,7 +60,7 @@ class DicomController(
     }
 
     @PostMapping("/dir/create")
-    @PreAuthorize("@accessService.hasAccessToResource(authentication.principal, #dirPath)")
+    @PreAuthorize("@accessCheckService.hasAccessToResource(authentication.principal, #dirPath)")
     fun createDirectory(
         @RequestBody dirPath: String
     ): ResponseEntity<String> {
@@ -73,7 +68,7 @@ class DicomController(
     }
 
     @DeleteMapping("/dir/delete")
-    @PreAuthorize("@accessService.hasAccessToResource(authentication.principal, #dirPath)")
+    @PreAuthorize("@accessCheckService.hasAccessToResource(authentication.principal, #dirPath)")
     fun deleteDirectory(
         @RequestBody dirPath: String
     ): ResponseEntity<String> {
@@ -82,13 +77,13 @@ class DicomController(
 
 
     @PostMapping("/dir/rename")
-    @PreAuthorize("@accessService.hasAccessToResource(authentication.principal, #renameRequest.oldFilePath)")
+    @PreAuthorize("@accessCheckService.hasAccessToResource(authentication.principal, #renameRequest.oldFilePath)")
     fun renameDirectory(@RequestBody renameRequest: RenameFileRequest): ResponseEntity<String> {
         return dicomClient.renameDirectory(renameRequest)
     }
 
     @GetMapping("/dir/get-content")
-    @PreAuthorize("@accessService.hasAccessToResource(authentication.principal, #dirPath)")
+    @PreAuthorize("@accessCheckService.hasAccessToResource(authentication.principal, #dirPath)")
     fun getDirectoryContents(
         @RequestParam dirPath: String
     ): ResponseEntity<GetDirectoryContentsResult> {
@@ -97,7 +92,7 @@ class DicomController(
 
     @GetMapping("/patients")
     fun getPatientList(@RequestParam username: String): ResponseEntity<PatientList> {
-        return dicomClient.getPatientList(accessService.getDomain(username))
+        return dicomClient.getPatientList(accessCheckService.getDomain(username))
     }
 
     @GetMapping("/studies")
@@ -116,7 +111,7 @@ class DicomController(
     }
 
     @GetMapping("/download")
-    @PreAuthorize("@accessService.hasAccessToResource(authentication.principal, #filePath)")
+    @PreAuthorize("@accessCheckService.hasAccessToResource(authentication.principal, #filePath)")
     fun downloadDicom(@RequestParam filePath: String): ResponseEntity<ByteArray> {
         return dicomClient.downloadDicom(filePath)
     }

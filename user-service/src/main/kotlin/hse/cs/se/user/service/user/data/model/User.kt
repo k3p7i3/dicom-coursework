@@ -8,7 +8,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 import java.util.UUID
 
-@Table("user")
+@Table("user_table")
 data class User(
     @Id
     @Column("id")

@@ -10,6 +10,8 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.awt.image.BufferedImage
 import java.io.File
+import java.io.FileOutputStream
+import java.io.OutputStream
 import javax.imageio.ImageIO
 
 @Service
@@ -166,27 +168,36 @@ class FileManagementService(
     ): S3Client.Response<String> {
         val frameFileName = DICOM_FRAME_NAME_PATTERN.format(frameNumber)
 
-        val file = File("$path/$frameFileName")
-        val fileWriteRes = ImageIO.write(image, "jpg", file)
+        val file = File(frameFileName)
+        val fileWriteRes: Boolean
+        FileOutputStream(file).use { fos ->
+            fileWriteRes = ImageIO.write(image, "jpg", fos)
+        }
 
         if (!fileWriteRes) {
             logger.logError(
-                "No appropriate file writer found for jpg " +
-                        "format, unable to upload image"
+                    "No appropriate file writer found for jpg " +
+                            "format, unable to upload image"
             )
 
             return S3Client.Response(
-                S3Client.ResponseType.FAIL,
-                "$path/$frameFileName"
+                    S3Client.ResponseType.FAIL,
+                    "$path/$frameFileName"
             )
         } else {
 
-            return s3Client.uploadFile(
-                S3Client.BucketType.DICOM_IMAGE,
-                path,
-                frameFileName,
-                file
+            val response = s3Client.uploadFile(
+                    S3Client.BucketType.DICOM_IMAGE,
+                    path,
+                    frameFileName,
+                    file
             )
+
+            if (file.exists()) {
+                file.delete()
+            }
+
+            return response
         }
     }
 

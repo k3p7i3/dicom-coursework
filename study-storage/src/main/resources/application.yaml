@@ -1,0 +1,36 @@
+server:
+  port: 8081
+
+spring:
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+  datasource:
+    url: jdbc:postgresql://postgres:5432/db_study
+    username: db_study
+    password: db_study
+
+  liquibase:
+    url: jdbc:postgresql://postgres:5432/db_study
+    user: db_study-liquibase
+    password: db_study-liquibase
+
+s3:
+  credentials:
+    profile-name: polina
+  endpoint-url: https://storage.yandexcloud.net
+  region: ru-central1
+  buckets:
+    dicom-bucket: dicom-file
+    image-bucket: dicom-frame
+
+  advanced:
+    connection-timeout: 1000000
+    request-timeout: 1000000
+    client-execution-timeout: 1000000
+
+logging:
+  level:
+    hse.cs.se.study.storage: trace

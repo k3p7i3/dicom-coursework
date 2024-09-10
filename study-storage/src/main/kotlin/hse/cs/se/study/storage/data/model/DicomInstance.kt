@@ -6,7 +6,7 @@ import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.Table
 import java.util.UUID
 
-@Table("dicom_instance.sql")
+@Table("dicom_instance")
 data class DicomInstance(
     @Id
     @Column("dicom_uid")

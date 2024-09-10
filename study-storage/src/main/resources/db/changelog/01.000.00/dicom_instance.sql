@@ -5,7 +5,7 @@ create table dicom_instance
     dicom_uid               uuid        not null default uuid_generate_v4()
         constraint pk_dicom_instance primary key,
     series_uid              varchar     not null
-        references study (study_uid),
+        references series (series_uid),
     sop_instance_uid        varchar     null,
     instance_number         integer     null,
     anatomic_region         varchar     null,

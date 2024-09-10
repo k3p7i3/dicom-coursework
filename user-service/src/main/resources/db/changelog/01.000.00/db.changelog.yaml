@@ -1,0 +1,12 @@
+---
+databaseChangeLog:
+  - include:
+      relativeToChangeLogFile: true
+      file: user.sql
+  - changeSet:
+      id: 01.000.00
+      author: pkopyrina
+      logicalFilePath: 01.000.00/db.changelog.yaml
+      changes:
+        - tagDatabase:
+            tag: 01.000.00

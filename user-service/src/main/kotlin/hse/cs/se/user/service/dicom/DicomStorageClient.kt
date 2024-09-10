@@ -1,19 +1,24 @@
 package hse.cs.se.user.service.dicom
 
 import hse.cs.se.user.service.dicom.data.model.*
-import hse.cs.se.user.service.dicom.data.model.GetDirectoryContentsResult
-import hse.cs.se.user.service.dicom.data.model.RenameFileRequest
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.*
 import org.springframework.http.client.MultipartBodyBuilder
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
+import org.springframework.stereotype.Component
+import org.springframework.util.LinkedMultiValueMap
+import org.springframework.util.MultiValueMap
 import org.springframework.web.client.RestTemplate
 import org.springframework.web.multipart.MultipartFile
 import java.util.*
 
+
+@Component
 class DicomStorageClient(
-    private val restTemplate: RestTemplate
+    private val restTemplate: RestTemplate,
+    @Value("\${web.client.study.storage.url}")
+    private val url: String
 ) {
-    private val url: String = "uri"
 
     fun uploadDicom(
         multipartFile: MultipartFile,
@@ -139,7 +144,7 @@ class DicomStorageClient(
     fun getDirectoryContents(
         dirPath: String
     ): ResponseEntity<GetDirectoryContentsResult> {
-        val endpointUrl = "$url/dicrectory/get-content"
+        val endpointUrl = "$url/directory/get-content"
         val headers = HttpHeaders()
         val requestEntity = HttpEntity<Any>(headers)
 

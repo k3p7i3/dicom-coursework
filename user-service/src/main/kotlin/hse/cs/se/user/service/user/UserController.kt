@@ -11,14 +11,16 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.RestController
 
+@RestController
 @RequestMapping("/api/v1/user")
 class UserController(
     private val userService: UserService
 ) {
 
     @GetMapping("/get")
-    @PreAuthorize("authentication.principal.name == #email")
+    @PreAuthorize("authentication.principal.email == #email")
     fun getUser(@RequestParam email: String? = null): ResponseEntity<CurrentUser> {
         return ResponseEntity.ok(userService.getCurrentUser(email))
     }
@@ -31,7 +33,7 @@ class UserController(
     }
 
     @PostMapping("/edit")
-    @PreAuthorize("authentication.principal.name == #editUserRequest.userEmail")
+    @PreAuthorize("authentication.principal.email == #editUserRequest.userEmail")
     fun editUser(
         @RequestBody editUserRequest: EditUserRequest
     ): ResponseEntity<CurrentUser> {
@@ -39,7 +41,7 @@ class UserController(
     }
 
     @PostMapping("/change-password")
-    @PreAuthorize("authentication.principal.name == #changePasswordRequest.email")
+    @PreAuthorize("authentication.principal.email == #changePasswordRequest.email")
     fun changePassword(
         @RequestBody changePasswordRequest: ChangePasswordRequest
     ): ResponseEntity<CurrentUser> {

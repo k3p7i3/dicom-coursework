@@ -27,7 +27,7 @@
 		<url/>
 	</scm>
 	<properties>
-		<java.version>21</java.version>
+		<java.version>17</java.version>
 		<kotlin.version>1.9.25</kotlin.version>
 	</properties>
 	<repositories>
@@ -68,6 +68,11 @@
 		<dependency>
 			<groupId>org.dcm4che</groupId>
 			<artifactId>dcm4che-imageio</artifactId>
+			<version>5.32.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.dcm4che</groupId>
+			<artifactId>dcm4che-imageio-opencv</artifactId>
 			<version>5.32.0</version>
 		</dependency>
 		<dependency>

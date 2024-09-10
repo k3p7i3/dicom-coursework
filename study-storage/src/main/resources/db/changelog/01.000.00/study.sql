@@ -5,7 +5,7 @@ create table study
     study_uid           varchar     not null
         constraint  pk_study primary key,
     patient_uid         uuid        not null
-        references patient(patient_uid);
+        references patient(patient_uid),
     study_id            varchar     null,
     study_date          date        null,
     study_time          time        null,
