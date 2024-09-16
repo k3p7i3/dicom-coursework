@@ -67,7 +67,7 @@ class Controller(
     }
 
     @DeleteMapping("/dicom/delete")
-    fun deleteDicom(@RequestParam filePath: String): ResponseEntity<String> {
+    fun deleteDicom(@RequestBody filePath: String): ResponseEntity<String> {
         dicomService.deleteDicom(filePath)
         return ResponseEntity.ok(filePath)
     }

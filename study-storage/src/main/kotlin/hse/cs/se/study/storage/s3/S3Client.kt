@@ -1,6 +1,7 @@
 package hse.cs.se.study.storage.s3
 
 import hse.cs.se.study.storage.data.model.additional.FileRename
+import hse.cs.se.study.storage.data.model.web.GetDirectoryContentsResult
 import java.io.File
 
 interface S3Client {
@@ -62,5 +63,5 @@ interface S3Client {
 
     fun getDirectoryContents(
         dirPath: String
-    ): Response<List<String>>
+    ): Response<GetDirectoryContentsResult>
 }

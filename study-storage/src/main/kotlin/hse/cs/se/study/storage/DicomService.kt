@@ -210,7 +210,7 @@ class DicomService(
                 logger.logWarn("Could not rename raw dicom file " +
                     "from $oldFilePath to $newFilePath")
             }
-            if (fileRenames[S3Client.BucketType.DICOM_IMAGE]!!.isNotEmpty()) {
+            if (fileRenames[S3Client.BucketType.DICOM_IMAGE]!!.isEmpty()) {
                 logger.logWarn("Could not rename image frames " +
                     "from $oldFilePath to $newFilePath")
             }

@@ -4,6 +4,7 @@ import com.amazonaws.services.s3.AmazonS3
 import com.amazonaws.services.s3.model.*
 import hse.cs.se.study.storage.configuration.properties.S3Properties
 import hse.cs.se.study.storage.data.model.additional.FileRename
+import hse.cs.se.study.storage.data.model.web.GetDirectoryContentsResult
 import hse.cs.se.study.storage.utils.logError
 import hse.cs.se.study.storage.utils.logTrace
 import hse.cs.se.study.storage.utils.logWarn
@@ -357,7 +358,7 @@ class S3ClientImpl(
 
     override fun getDirectoryContents(
         dirPath: String
-    ): S3Client.Response<List<String>> {
+    ): S3Client.Response<GetDirectoryContentsResult> {
         val bucket = getBucketByBucketType(S3Client.BucketType.RAW_DICOM)
         try {
             val request = ListObjectsV2Request()
@@ -365,11 +366,13 @@ class S3ClientImpl(
                 .withPrefix("$dirPath/")
                 .withDelimiter("/")
 
-            val dirContents = s3Client.listObjectsV2(request).commonPrefixes
+            val objectsList = s3Client.listObjectsV2(request)
+            val dirs = objectsList.commonPrefixes
+            val files = objectsList.objectSummaries.map { it.key }.filter { it != "$dirPath/" }
 
             return S3Client.Response(
                 S3Client.ResponseType.SUCCESS,
-                dirContents
+                GetDirectoryContentsResult(dirs, files)
             )
         } catch (exc: Exception) {
             logger.logError(
@@ -379,7 +382,7 @@ class S3ClientImpl(
 
             return S3Client.Response(
                 S3Client.ResponseType.FAIL,
-                emptyList()
+                GetDirectoryContentsResult(emptyList(), emptyList())
             )
         }
     }

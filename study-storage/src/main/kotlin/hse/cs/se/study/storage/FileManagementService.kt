@@ -27,10 +27,7 @@ class FileManagementService(
             return null
         }
 
-        val (dirs, files) = directoryContents.response!!
-            .partition { it.endsWith("/") }
-
-        return GetDirectoryContentsResult(dirs, files)
+        return directoryContents.response
     }
 
     fun createDirectory(

@@ -12,6 +12,7 @@ import hse.cs.se.user.service.user.exception.UserAlreadyExistException
 import hse.cs.se.user.service.user.exception.UserNotFoundException
 import hse.cs.se.user.service.utils.logError
 import hse.cs.se.user.service.utils.logTrace
+import hse.cs.se.user.service.utils.logWarn
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.security.core.context.SecurityContextHolder
@@ -104,7 +105,7 @@ class UserService(
             changePasswordRequest.email
         ) ?: throw UserNotFoundException(changePasswordRequest.email)
 
-        if (user.userPassword != passwordEncoder.encode(changePasswordRequest.oldPassword)) {
+        if (!passwordEncoder.matches(changePasswordRequest.oldPassword, user.userPassword)) {
             throw PasswordsNotMatchException(changePasswordRequest.email)
         }
 

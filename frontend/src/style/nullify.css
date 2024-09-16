@@ -1,0 +1,56 @@
+body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    overflow: auto;
+    color: var(--dark-color);
+}
+
+#root {
+    margin-top: 0;
+    position:fixed;
+    top:0px;
+    bottom:0px;
+    left:0px;
+    right:0px;
+    background-color: var(--background-color);
+}
+
+h1, h2, h3, h4, h5, h6, p {
+    margin: 0;
+}
+
+
+ul {  
+    list-style-type: none; 
+    padding: 0; 
+    margin: 0;
+}
+
+li {
+    list-style-type: none; 
+    padding: 0; 
+    margin: 0;
+    display: inline-block;
+}
+
+input {
+    all: unset;
+    display: inline-block;
+}
+
+a:link, a:visited, a:hover, a:active {
+    text-decoration: none;
+    color: inherit;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+select {
+    all: unset;
+}
+  

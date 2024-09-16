@@ -37,3 +37,11 @@ services:
     links:
       - postgres
       - study-storage-service
+
+  frontend:
+    image: frontend-service:v1
+    container_name: frontend
+    ports:
+      - "3000:3000"
+    links:
+      - user-service

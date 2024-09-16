@@ -1,0 +1,35 @@
+body {
+  font-family: Arial, sans-serif;
+}
+
+h2 {
+  font-size: 22px;
+  font-weight: 600;
+}
+
+h3 {
+  font-size: 20px;
+  font-weight: 500;
+}
+
+.storage-page h3 {
+  font-size: 16px;
+}
+
+.nav-bar__item {
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.logo {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.button {
+  font-size: 16px;
+}
+
+.storage-object-title {
+  font-size: 14px;
+}
